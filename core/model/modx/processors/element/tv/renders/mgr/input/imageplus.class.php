@@ -19,6 +19,7 @@ class modTemplateVarInputRenderImagePlus extends modTemplateVarInputRender {
 		$this->tv->set('targetHeight',$params['targetHeight']);
 		
 		$this->tv->set('value',htmlspecialchars_decode($value));
+		$this->tv->set('assetsUrl',ImagePlusAssets);
 
     }//
 }

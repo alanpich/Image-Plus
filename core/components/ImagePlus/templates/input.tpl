@@ -2,30 +2,28 @@
 <div id="imageplusbrowser{$tv->id}"></div>
 <img id="imagepluspreview{$tv->id}" />
 <div id="imageplusbutton{$tv->id}"></div>
-<script type="text/javascript" src="{$_config.assets_url}components/ImagePlus/js/ImagePlus.js"></script>
+<input id="tv{$tv->id}" name="tv{$tv->id}"
+	type="hidden" class="textfield"
+	value="{$tv->get('value')|escape}"
+	{$style}
+	tvtype="{$tv->type}"
+/>
+<script type="text/javascript" src="{$tv->assetsUrl}js/jCrop/js/jquery.min.js"></script>
+<script type="text/javascript" src="{$tv->assetsUrl}js/jCrop/js/jquery.Jcrop.min.js"></script>
+<link rel="stylesheet" type="text/css" href="{$tv->assetsUrl}js/jCrop/css/jquery.Jcrop.css" />
+<script type="text/javascript" src="{$tv->assetsUrl}js/ImagePlus.js"></script>
 <script type="text/javascript">
-Ext.onReady(function() {
-	IP{$tv->id} = new ImagePlus({$tv->id});
-	IP{$tv->id}.set({
-		targetWidth: {$tv->targetWidth},
-		targetHeight: {$tv->targetHeight},
-		siteUrl: '{$_config.site_url}',
-		preview: document.getElementById('imagepluspreview{$tv->id}')
-	});
-	console.log(IP{$tv->id});
-});
-</script>
-<script type="text/javascript">
-// <![CDATA[
-{literal}
-Ext.onReady(function() {
-    var fld{/literal}{$tv->id}{literal} = MODx.load({
+function ImagePlusReady{$tv->id}() {
+	
+	IP{$tv->id}.parseTV();
+
+    IP{$tv->id}.browser{literal} = MODx.load({
     {/literal}
         xtype: 'modx-panel-tv-image'
         ,renderTo: 'imageplusbrowser{$tv->id}'
         ,tv: '{$tv->id}'
-        ,value: '{$tv->value|escape}'
-        ,relativeValue: '{$tv->value|escape}'
+        ,value: IP{$tv->id}.sourceImg.src
+        ,relativeValue: IP{$tv->id}.sourceImg.src
         ,width: '97%'
         ,allowBlank: {if $params.allowBlank == 1 || $params.allowBlank == 'true'}true{else}false{/if}
         ,wctx: '{if $params.wctx}{$params.wctx}{else}web{/if}'
@@ -36,7 +34,7 @@ Ext.onReady(function() {
         ,listeners: {
             'select': {fn:function(data) {
                 MODx.fireResourceFormChange();
-                 {/literal}IP{$tv->id}{literal}.updateImageSrc(data);
+                 {/literal}IP{$tv->id}{literal}.updateSourceImage(data);
                
             }}
         }
@@ -67,43 +65,25 @@ Ext.onReady(function() {
      			{/literal}IP{$tv->id}.showCropWindow();{literal}
      		}
      });
-   
-    
-    
-    
-});
-{/literal}
-// ]]>
-</script>
-<!-- END IMAGE FINDER BIT -->
+	 
+	 {/literal}
+	 
+	IP{$tv->id}.previewThumb();
 
-<input id="tv{$tv->id}" name="tv{$tv->id}"
-	type="text" class="textfield"
-	value="{$tv->get('value')|escape}"
-	{$style}
-	tvtype="{$tv->type}"
-/>
-
-<script type="text/javascript">
-// <![CDATA[
-{literal}
-Ext.onReady(function() {
-    var fld = MODx.load({
-    {/literal}
-        xtype: 'textfield'
-        ,applyTo: 'tv{$tv->id}'
-        ,width: '99%'
-        ,enableKeyEvents: true
-        ,msgTarget: 'under'
-        ,allowBlank: {if $params.allowBlank == 1 || $params.allowBlank == 'true'}true{else}false{/if}
-        {if $params.maxLength},maxLength: {$params.maxLength}{/if}
-        {if $params.minLength},minLength: {$params.minLength}{/if}
-    {literal}
-        ,listeners: { 'keydown': { fn:MODx.fireResourceFormChange, scope:this}}
-    });
-    Ext.getCmp('modx-panel-resource').getForm().add(fld);
-    MODx.makeDroppable(fld);
+	{literal}
+};// end ImagePlusReady
+	
+Ext.onReady(function(){{/literal}
+	IP{$tv->id} = new ImagePlus({$tv->id});
+	IP{$tv->id}{literal}.set({ {/literal}
+		targetWidth: {$tv->targetWidth},
+		targetHeight: {$tv->targetHeight},
+		siteUrl: '{$_config.site_url}',
+		preview: document.getElementById('imagepluspreview{$tv->id}'),
+		tvInput: document.getElementById('tv{$tv->id}'),
+	});
+	ImagePlusReady{$tv->id}();
+	console.log(IP{$tv->id});
 });
-{/literal}
-// ]]>
 </script>
+
