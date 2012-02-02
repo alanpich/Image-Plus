@@ -72,6 +72,8 @@
 				var TV = this.tvInput.value;
 				this.TV = TV;
 				
+				if(TV==''){return;};
+				
 				var bits = TV.split('?');
 				var vars = bits[1].split('&');
 				
