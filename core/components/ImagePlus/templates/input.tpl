@@ -56,7 +56,6 @@ function ImagePlusReady{$tv->id}() {
     		src: IP{/literal}{$tv->id}{literal}.getImageThumb()
     	}});
     	
-    	console.log(IP{/literal}{$tv->id}{literal}.getImageThumb());
     
      var btn{/literal}{$tv->id}{literal} = new Ext.Button({
      	applyTo:'imageplusbutton{/literal}{$tv->id}{literal}'
@@ -76,14 +75,13 @@ function ImagePlusReady{$tv->id}() {
 Ext.onReady(function(){{/literal}
 	IP{$tv->id} = new ImagePlus({$tv->id});
 	IP{$tv->id}{literal}.set({ {/literal}
-		targetWidth: {$tv->targetWidth},
-		targetHeight: {$tv->targetHeight},
+		targetWidth: '{$tv->targetWidth}',
+		targetHeight: '{$tv->targetHeight}',
 		siteUrl: '{$_config.site_url}',
 		preview: document.getElementById('imagepluspreview{$tv->id}'),
 		tvInput: document.getElementById('tv{$tv->id}'),
 	});
 	ImagePlusReady{$tv->id}();
-	console.log(IP{$tv->id});
 });
 </script>
 

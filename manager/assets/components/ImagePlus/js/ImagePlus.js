@@ -22,6 +22,10 @@
 		// Set settings ----------------------------------------------------------------------
 		this.set = function(obj){
 				for(i in obj){
+					if(i == 'targetWidth' || i=='targetHeight'){
+						if(obj[i]==''){obj[i]=100};
+						obj[i] = parseInt(obj[i]);
+					};
 					this[i] = obj[i];
 				};
 			};//
@@ -64,7 +68,6 @@
 				this.TV = TV;
 				this.tvInput.value = TV;
 				this.previewThumb();
-				console.log("UPDATED",this);
 			};//
 			
 		// Break TV into variables for use -------------------------------------------------------
@@ -75,6 +78,8 @@
 				if(TV==''){return;};
 				
 				var bits = TV.split('?');
+
+				if(bits[1]==null){return;};
 				var vars = bits[1].split('&');
 				
 				for(var k=0;k<vars.length;k++){
@@ -122,7 +127,6 @@
 						
 					});
 				
-				console.log('this.cropWindow',this.cropWindow);
 				this.cropWindow.buttons.pop();
 				
 				this.cropWindow.show();
@@ -131,8 +135,7 @@
 						aspectRatio: this.targetWidth / this.targetHeight,
 						minSize: [this.targetWidth, this.targetHeight],
 						onSelect: function(c){
-							console.log(window.currentImagePlus);
-							window.currentImagePlus.crop.sX = c.x;
+								window.currentImagePlus.crop.sX = c.x;
 							window.currentImagePlus.crop.sY = c.y;
 							window.currentImagePlus.crop.w = c.w;
 							window.currentImagePlus.crop.h = c.h;
