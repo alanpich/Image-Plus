@@ -60,7 +60,7 @@
 				var TV = this.thumbURL;
 					TV+= 'h='+tH;
 					TV+= '&w='+tW;
-					TV+= '&src='+this.sourceImg.src;
+					TV+= '&src='+this.baseUrl+this.sourceImg.src;
 					TV+= '&sx='+this.crop.sX;		// Start Left crop
 					TV+= '&sy='+this.crop.sY;		// Start Top crop
 					TV+= '&sw='+this.crop.w;			// Crop width
@@ -125,7 +125,7 @@
 								alert("SAVE");
 								return false;
 							}
-						,html: '<img src="'+this.siteUrl+this.sourceImg.src+'" id="crop'+this.TVid+'" />'
+						,html: '<img src="'+this.baseUrl+this.sourceImg.src+'" id="crop'+this.TVid+'" />'
 						,allowDrop: false
 						
 						
