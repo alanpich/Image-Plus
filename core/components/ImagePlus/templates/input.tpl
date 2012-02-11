@@ -8,9 +8,6 @@
 	{$style}
 	tvtype="{$tv->type}"
 />
-<pre style="width:280px; font-family:mono; font-size:10px; border:1px dashed #ddd; padding:10px;">
-{$tv->dump}
-</pre>
 <script type="text/javascript" src="{$tv->assetsUrl}js/jCrop/js/jquery.min.js"></script>
 <script type="text/javascript" src="{$tv->assetsUrl}js/jCrop/js/jquery.Jcrop.min.js"></script>
 <link rel="stylesheet" type="text/css" href="{$tv->assetsUrl}js/jCrop/css/jquery.Jcrop.css" />
