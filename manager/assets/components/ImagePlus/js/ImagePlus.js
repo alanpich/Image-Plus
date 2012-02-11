@@ -91,7 +91,7 @@
 					var key = bits[0];
 					var val = bits[1];
 					switch(key){
-						case 'src'	:	this.sourceImg.src = val;		break;
+						case 'src'	:	this.sourceImg.src = val.replace(this.baseUrl,'');		break;
 						case 'sx'	:	this.crop.sX = parseInt(val);	break;
 						case 'sy'	:	this.crop.sY = parseInt(val);	break;
 						case 'sw'	:	this.crop.w  = parseInt(val);	break;

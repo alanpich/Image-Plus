@@ -8,6 +8,11 @@
 	{$style}
 	tvtype="{$tv->type}"
 />
+<!-- <pre style="border:1px dashed #ddd; width:580px; padding:10px; font-size:10px; font-family:mono;">
+	TV Value:          {$tv->value} 
+	Media Source path: {$tv->base}
+	Image Src File:    {$tv->src}
+</pre> -->
 <script type="text/javascript" src="{$tv->assetsUrl}js/jCrop/js/jquery.min.js"></script>
 <script type="text/javascript" src="{$tv->assetsUrl}js/jCrop/js/jquery.Jcrop.min.js"></script>
 <link rel="stylesheet" type="text/css" href="{$tv->assetsUrl}js/jCrop/css/jquery.Jcrop.css" />

@@ -27,25 +27,21 @@ class modTemplateVarInputRenderImagePlus extends modTemplateVarInputRender {
         $source->initialize();
         $base = $source->getBaseUrl();
         $this->tv->set('base',$base);
-
-		// Get source file path (if set)
+        
+        // Get source file path (if set)
+		$src = '';
 		if($value != ''){
-		
 			$bits = explode('?',$value);
 			$bits = explode('&',$bits[1]);
 			foreach($bits as $bit){
 				$half = explode('=',$bit);
 				if( $half[0] == 'src'){
-					
 					$src = $half[1];
-       				 $this->tv->set('dump',$base,true);
-					
 					break;
 				};			
 			};
-		
 		};
-		
+		$this->tv->set('src',$src);
         
         		
 		$tW = $params['targetWidth'];
