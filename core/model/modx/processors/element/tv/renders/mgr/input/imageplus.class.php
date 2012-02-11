@@ -8,15 +8,22 @@ include $modx->getOption('core_path').'components/ImagePlus/imageplus.conf.php';
  
 class modTemplateVarInputRenderImagePlus extends modTemplateVarInputRender {
     public function getTemplate() {
-        return '../core/components/ImagePlus/templates/input.tpl';
+    	global $modx;
+    	
+        return $modx->getOption('core_path').'components/ImagePlus/templates/input.tpl';
     }//
     
     public function process($value,array $params = array()) {
     
 		$options = $this->getInputOptions();
 		
-		$this->tv->set('targetWidth',$params['targetWidth']);
-		$this->tv->set('targetHeight',$params['targetHeight']);
+		$tW = $params['targetWidth'];
+		if($tW==''){$tW=-1;};
+		$tH = $params['targetHeight'];
+		if($tH==''){$tH=-1;};
+		
+		$this->tv->set('targetWidth',$tW);
+		$this->tv->set('targetHeight',$tH);
 		
 		$this->tv->set('value',htmlspecialchars_decode($value));
 		$this->tv->set('assetsUrl',ImagePlusAssets);

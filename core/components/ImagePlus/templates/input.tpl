@@ -1,6 +1,6 @@
 <!-- IMAGE FINDER BIT -->
 <div id="imageplusbrowser{$tv->id}"></div>
-<img id="imagepluspreview{$tv->id}" />
+<img id="imagepluspreview{$tv->id}" width="{$tv->targetWidth}" height="{$tv->targetHeight}" />
 <div id="imageplusbutton{$tv->id}"></div>
 <input id="tv{$tv->id}" name="tv{$tv->id}"
 	type="hidden" class="textfield"

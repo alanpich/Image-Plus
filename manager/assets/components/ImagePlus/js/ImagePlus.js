@@ -52,10 +52,14 @@
 			
 		// Update the TV value ------------------------------------------------------------------
 		this.update = function(){
+			
+				// Check for freeform
+				var tW = (this.targetWidth==-1)? this.crop.w : this.targetWidth;
+				var tH = (this.targetHeight==-1)? this.crop.h : this.targetHeight;
 				
 				var TV = this.thumbURL;
-					TV+= 'h='+this.targetHeight;
-					TV+= '&w='+this.targetWidth;
+					TV+= 'h='+tH;
+					TV+= '&w='+tW;
 					TV+= '&src='+this.sourceImg.src;
 					TV+= '&sx='+this.crop.sX;		// Start Left crop
 					TV+= '&sy='+this.crop.sY;		// Start Top crop
@@ -131,9 +135,16 @@
 				
 				this.cropWindow.show();
 				window.currentImagePlus = this;
+				
+				// Set up jCrop options
+				var mWidth = (this.targetWidth>=0)? this.targetWidth : 0;	
+				var mHeight = (this.targetHeight>=0)? this.targetHeight : 0;	
+				var ratio = (mWidth > 0 && mHeight>0)? mWidth/mHeight : null;
+				
+
 				jQuery('#crop'+this.TVid).Jcrop({
-						aspectRatio: this.targetWidth / this.targetHeight,
-						minSize: [this.targetWidth, this.targetHeight],
+						aspectRatio: ratio,
+						minSize: [mWidth, mHeight],
 						onSelect: function(c){
 								window.currentImagePlus.crop.sX = c.x;
 							window.currentImagePlus.crop.sY = c.y;
