@@ -114,10 +114,22 @@
 		// Opens the cropping window -----------------------------------------------------------
 		this.showCropWindow = function(){
 			
+				// Calculate width/height constraints
+				var wW = Win().width;
+				
+				var wH = Win().height;				
+				if( wH > this.sourceImg.height + 125){
+						wH = this.sourceImg.height + 125;
+					};
+					
+				if( wW > this.sourceImg.width + 10){
+						wW = this.sourceImg.width + 10;
+					};
+								
 				this.cropWindow = new MODx.Window({
 						 title: 'Image Crop'
-						,width: this.sourceImg.width+"px"
-						,height: this.sourceImg.height
+						,width: wW
+						,height: wH
 						,resizable: false
 						,cancelBtnText:	'Done'
 						,saveBtnText:	''
@@ -125,9 +137,10 @@
 								alert("SAVE");
 								return false;
 							}
-						,html: '<img src="'+this.baseUrl+this.sourceImg.src+'" id="crop'+this.TVid+'" />'
+						,html: '<img src="'+this.baseUrl+this.sourceImg.src+'" id="crop'+this.TVid+'" style="position:relative; top:-20px; margin-bottom:-0px;" />'
 						,allowDrop: false
-						
+						,autoScroll: true
+						,autoHeight: false
 						
 					});
 				
@@ -146,9 +159,6 @@
 				var sx2 = sx + this.crop.w;
 				var sy2 = sy + this.crop.h;
 				
-				console.log( "Crop Zone: ", Array(sx,sy,sx2,sy2));
-				
-
 				jQuery('#crop'+this.TVid).Jcrop({
 						aspectRatio: ratio,
 						minSize: [mWidth, mHeight],
@@ -169,3 +179,39 @@
 		
 		
 	};// END ImagePlus
+	
+	
+	
+	
+function Win() {
+	var browserWinWidth = 0, browserWinHeight = 0;
+	if( typeof( window.innerWidth ) == 'number' ) {
+		//Non-IE
+		browserWinWidth = window.innerWidth;
+		browserWinHeight = window.innerHeight;
+	} else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+		//IE 6+ in 'standards compliant mode'
+		browserWinWidth = document.documentElement.clientWidth;
+		browserWinHeight = document.documentElement.clientHeight;
+	} else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
+		//IE 4 compatible
+		browserWinWidth = document.body.clientWidth;
+		browserWinHeight = document.body.clientHeight;
+	}
+	return { width: browserWinWidth, height: browserWinHeight };
+}	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
