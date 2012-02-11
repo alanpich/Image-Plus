@@ -141,10 +141,18 @@
 				var mHeight = (this.targetHeight>=0)? this.targetHeight : 0;	
 				var ratio = (mWidth > 0 && mHeight>0)? mWidth/mHeight : null;
 				
+				var sx = this.crop.sX;
+				var sy = this.crop.sY;
+				var sx2 = sx + this.crop.w;
+				var sy2 = sy + this.crop.h;
+				
+				console.log( "Crop Zone: ", Array(sx,sy,sx2,sy2));
+				
 
 				jQuery('#crop'+this.TVid).Jcrop({
 						aspectRatio: ratio,
 						minSize: [mWidth, mHeight],
+						setSelect:   [ sx, sy, sx2, sy2 ],
 						onSelect: function(c){
 								window.currentImagePlus.crop.sX = c.x;
 							window.currentImagePlus.crop.sY = c.y;
