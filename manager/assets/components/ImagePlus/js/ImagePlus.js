@@ -137,16 +137,32 @@
 								alert("SAVE");
 								return false;
 							}
-						,html: '<img src="'+this.baseUrl+this.sourceImg.src+'" id="crop'+this.TVid+'" style="position:relative; top:-20px; margin-bottom:-0px;" />'
+						,html: '<img src="'+this.baseUrl+this.sourceImg.src+'" id="crop'+this.TVid+'" style="margin-top:-20px; margin-bottom:-0px;" />'
 						,allowDrop: false
 						,autoScroll: true
 						,autoHeight: false
+						,closeAction: 'close'
+						,collapsible: false
+						,constrain: true
+						,margins:  {top:0, bottom:0}
+						,padding: 0
+						,resizable: true
+						,shadow: true
+						
 						
 					});
+					
+				this.cropWindow.on('beforeHide',function(){
+					window.currentImagePlus.update();
+					window.currentImagePlus.cropper.destroy(); // Destroy jCrop
+					Ext.getCmp('modx-panel-resource').markDirty(); // Enable save button
+					window.currentImagePlus = null;
+				});	
 				
 				this.cropWindow.buttons.pop();
 				
 				this.cropWindow.show();
+				
 				window.currentImagePlus = this;
 				
 				// Set up jCrop options
@@ -159,6 +175,9 @@
 				var sx2 = sx + this.crop.w;
 				var sy2 = sy + this.crop.h;
 				
+				this.croppper = false;
+				
+				
 				jQuery('#crop'+this.TVid).Jcrop({
 						aspectRatio: ratio,
 						minSize: [mWidth, mHeight],
@@ -168,10 +187,9 @@
 							window.currentImagePlus.crop.sY = c.y;
 							window.currentImagePlus.crop.w = c.w;
 							window.currentImagePlus.crop.h = c.h;
-							window.currentImagePlus.update();
+					//		window.currentImagePlus.update();	// Removed to reduce calls to phpThumb
 						}
-					});
-			
+					},function(){window.currentImagePlus.cropper = this;});
 			
 			};//
 			
