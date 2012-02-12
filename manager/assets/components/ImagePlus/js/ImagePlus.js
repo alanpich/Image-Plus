@@ -10,6 +10,9 @@ ImagePlus = function( TVid, opts){ //===========================================
 	this.TV = '';
 	this.buttonText = 'Crop Image';
 	
+	this.targetWidth = false;
+	this.targetHeight = false;
+	
 	// Override defaults
 	for(i in opts){this[i]=opts[i]};
 	
@@ -196,9 +199,13 @@ ImagePlus = function( TVid, opts){ //===========================================
 			var tW = (this.targetWidth==-1)? this.crop.w : this.targetWidth;
 			var tH = (this.targetHeight==-1)? this.crop.h : this.targetHeight;
 			
+			console.log(tW,tH);
+			
 			var TV = phpThumb+'';
-				TV+= 'h='+tH;
-				TV+= '&w='+tW;
+				if(this.targetHeight!=-1){
+					TV+= 'h='+tH;}
+				if(this.targetWidth!=-1){
+					TV+= 'w='+tW;}		
 				TV+= '&src='+this.baseUrl+this.img.src;
 				TV+= '&sx='+this.crop.x;		// Start Left crop
 				TV+= '&sy='+this.crop.y;		// Start Top crop

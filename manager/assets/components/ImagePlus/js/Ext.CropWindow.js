@@ -69,16 +69,30 @@ Extamples.CropWindow = Ext.extend(Extamples.CropWindowUi, {
 		var T = (Win().height - H)/2;
 		this.setPagePosition(L,T);
 		
+		var mWidth = (IP.targetWidth==-1) ? 10  : IP.targetWidth;
+		var mHeight = (IP.targetHeight==-1) ? 10 : IP.targetHeight;
+		
+		var cWidth = (IP.crop.w==-1) ? 100 : IP.crop.w;
+		var cHeight = (IP.crop.h==-1) ? 100 : IP.crop.h;
+//		var cHeight = IP.crop.h;
+		console.log(cHeight);
+		
+		var useRatio = true;
+		if(IP.targetWidth==-1||IP.targetHeight==-1){
+			useRatio = false;
+		};
+		
 		var crop = new Ext.ux.ImageCrop({
 			imageUrl: this.imageUrl,
 			initialWidth: imgLoad.width,
 			initialHeight: imgLoad.height,
-			minWidth: IP.targetWidth,
-			minHeight: IP.targetHeight,
-			cropStartH: IP.crop.h,
-			cropStartW: IP.crop.w,
+			minWidth: mWidth,
+			minHeight: mHeight,
+			cropStartH: cHeight,
+			cropStartW: cWidth,
 			cropStartX: IP.crop.x,
-			cropStartY: IP.crop.y
+			cropStartY: IP.crop.y,
+			preserveRatio: useRatio
 			//       quadratic: true
 			});     		
 		
