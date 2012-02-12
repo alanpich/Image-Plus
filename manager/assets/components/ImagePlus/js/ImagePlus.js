@@ -92,10 +92,11 @@ ImagePlus = function( TVid, opts){ //===========================================
 				,openTo: this.getOpenTo()
 				,source: this.mediaSourceId
 				,msgTarget: 'under'
+				,imagePlus: this
 				,listeners: {
 				    'select': {fn:function(data) {
 				        MODx.fireResourceFormChange();
-				   //      this.updateSourceImage(data);
+				        this.imagePlus.updateSourceImage(data);
 				       
 				    }}
 				}
@@ -112,7 +113,16 @@ ImagePlus = function( TVid, opts){ //===========================================
 			return bits.join('/');
 		};
 		
-
+	// Updates imagePlus on source change ----------------------------------------------------------
+	this.updateSourceImage = function(data){
+			this.img.src 	= data.url;
+			this.img.width 	= data.image_width;
+			this.img.height = data.image_height;
+			this.crop.w 	= data.image_width;
+			this.crop.h 	= data.image_height;
+			
+			this.update();
+		};//
 
 
 
@@ -143,7 +153,7 @@ ImagePlus = function( TVid, opts){ //===========================================
 	// Launch cropper window ----------------------------------------------------------------------
 	this.launchCropWindow = function(){
 			this.window = new Extamples.CropWindow({
-				imageUrl: this.baseUrl+this.img.src,
+				imageUrl: this.baseUrl+encodeURIComponent(this.img.src),
 				listeners:{
 				save: function(){
 				  // handler if a crop was successfull, and the window was closed

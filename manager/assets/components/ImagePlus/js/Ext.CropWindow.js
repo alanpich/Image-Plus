@@ -11,10 +11,13 @@
 Ext.ns('Extamples');
 Extamples = {};
 Extamples.CropWindowUi = Ext.extend(Ext.Window, {
-  title: 'Image Crop Utility',
+  title: 'Image+ Cropper',
   width: 660,
-  height: 510,
+  height: 200,
   modal: true,
+  autoScroll: true,
+  autoHeight: false,
+  
   initComponent: function() {
     this.fbar = {
       xtype: 'toolbar',
@@ -49,7 +52,22 @@ Extamples.CropWindow = Ext.extend(Extamples.CropWindowUi, {
     var imgLoad = new Image();
     imgLoad.onload = (function(){
 		var IP = ImagePlusArray[this.imagePlusId];
-		this.setSize(imgLoad.width + 20, imgLoad.height + 100);
+		
+		// Calculate width bounds
+		var maxW = Win().width * 0.95;
+		var maxH = Win().height * 0.95;		
+		var imgW = imgLoad.width + 20;
+		var imgH = imgLoad.height + 100;
+		var W = imgW;
+		var H = imgH;
+		if( imgW > maxW){ W = maxW};
+		if( imgH > maxH){ H = maxH};		
+		this.setSize(W, H);
+		
+		// Calculate center of page
+		var L = (Win().width - W)/2;
+		var T = (Win().height - H)/2;
+		this.setPagePosition(L,T);
 		
 		var crop = new Ext.ux.ImageCrop({
 			imageUrl: this.imageUrl,
@@ -67,6 +85,7 @@ Extamples.CropWindow = Ext.extend(Extamples.CropWindowUi, {
       	this.add(crop);
     }).createDelegate(this);
     imgLoad.src = this.imageUrl;
+    console.log('SRC:::',this.imageUrl);
     
     // handler for the buttons
     this.buttonCancel.on('click', this.close, this);
@@ -202,3 +221,23 @@ Ext.ux.ImageCrop = Ext.extend(Ext.Component, {
 
 
 
+function Win() {
+	var browserWinWidth = 0, browserWinHeight = 0;
+	if( typeof( window.innerWidth ) == 'number' ) {
+		//Non-IE
+		browserWinWidth = window.innerWidth;
+		browserWinHeight = window.innerHeight;
+	} else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+		//IE 6+ in 'standards compliant mode'
+		browserWinWidth = document.documentElement.clientWidth;
+		browserWinHeight = document.documentElement.clientHeight;
+	} else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
+		//IE 4 compatible
+		browserWinWidth = document.body.clientWidth;
+		browserWinHeight = document.body.clientHeight;
+	}
+	return { width: browserWinWidth, height: browserWinHeight };
+}	
+	
+	
+	
