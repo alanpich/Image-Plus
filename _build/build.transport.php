@@ -7,8 +7,8 @@ set_time_limit(0);
 define('PKG_NAME','ImagePlus');
 define('PKG_NAME_LOWER','imageplus');
 define('PKG_NAME_FOLDER','ImagePlus');
-define('PKG_VERSION','1.0');
-define('PKG_RELEASE','beta1');
+define('PKG_VERSION','1.1');
+define('PKG_RELEASE','beta2');
  
 /* define build paths */
 $root = dirname(dirname(__FILE__)).'/';
@@ -31,7 +31,7 @@ unset($root);
 
  
 /* override with your own defines here (see build.config.sample.php) */
-require_once $sources['build'] . 'build.config.php';
+define('MODX_CORE_PATH','/var/web/www/mtest/core/');
 require_once MODX_CORE_PATH . 'model/modx/modx.class.php';
  
  
