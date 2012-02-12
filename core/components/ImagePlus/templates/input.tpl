@@ -1,6 +1,6 @@
 <!-- IMAGE FINDER BIT -->
 <div id="imageplusbrowser{$tv->id}"></div>
-<img id="imagepluspreview{$tv->id}" width="{$tv->targetWidth}" height="{$tv->targetHeight}" />
+<img id="imagepluspreview{$tv->id}" />
 <div id="imageplusbutton{$tv->id}"></div>
 <input id="tv{$tv->id}" name="tv{$tv->id}"
 	type="hidden" class="textfield"
@@ -13,11 +13,32 @@
 	Media Source path: {$tv->base}
 	Image Src File:    {$tv->src}
 </pre> -->
-<script type="text/javascript" src="{$tv->assetsUrl}js/jCrop/js/jquery.min.js"></script>
-<script type="text/javascript" src="{$tv->assetsUrl}js/jCrop/js/jquery.Jcrop.min.js"></script>
-<link rel="stylesheet" type="text/css" href="{$tv->assetsUrl}js/jCrop/css/jquery.Jcrop.css" />
+<script type="text/javascript" src="{$tv->assetsUrl}js/Ext.CropWindow.js"></script>
 <script type="text/javascript" src="{$tv->assetsUrl}js/ImagePlus.js"></script>
 <script type="text/javascript">
+
+// Invoke a new ImagePlus object =========================================================
+IP{$tv->id} = new ImagePlus({$tv->id},{literal} { {/literal}
+
+		tvInputId: 'tv{$tv->id}',
+		previewId: 'imagepluspreview{$tv->id}',
+		buttonId: 'imageplusbutton{$tv->id}',
+		browserId: 'imageplusbrowser{$tv->id}',
+		
+		targetWidth: '{$tv->targetWidth}',
+		targetHeight: '{$tv->targetHeight}',	
+		
+		baseUrl: '{$tv->base}' ,
+		mediaSourceId: '{$tv->source}',
+		
+		TV: '{$tv->value}'
+
+{literal} });
+Ext.onReady(function(){ {/literal}
+	IP{$tv->id}.init();
+{literal} }); {/literal}
+/*
+
 function ImagePlusReady{$tv->id}() {
 	
 	IP{$tv->id}.parseTV();
@@ -62,13 +83,28 @@ function ImagePlusReady{$tv->id}() {
     	}});
     	
     
-     var btn{/literal}{$tv->id}{literal} = new Ext.Button({
-     	applyTo:'imageplusbutton{/literal}{$tv->id}{literal}'
-     	,text:'Edit Image'
-     	,handler: function(){
-     			{/literal}IP{$tv->id}.showCropWindow();{literal}
-     		}
-     });
+ // Button to launch crop window   =========================================================
+    new Ext.Button({   {/literal}
+          renderTo: 'imageplusbutton{$tv->id}',
+          text: 'Crop Image!', {literal}
+          handler: function() {
+            //getting the image URL from whereever you want
+ {/literal} var imageURL = IP{$tv->id}.baseUrl+IP{$tv->id}.sourceImg.src;		{literal}
+            var cw = new Extamples.CropWindow({
+              imageUrl: imageURL,
+              listeners:{
+                save: function(){
+                  // handler if a crop was successfull, and the window was closed
+                  console.log('save!');
+                },
+                scope: this
+              }
+            });
+            cw.show();
+          }
+        });
+    	
+
 	 
 	 {/literal}
 	 
@@ -85,9 +121,13 @@ Ext.onReady(function(){{/literal}
 		siteUrl: '{$_config.site_url}',
 		preview: document.getElementById('imagepluspreview{$tv->id}'),
 		tvInput: document.getElementById('tv{$tv->id}'),
-		baseUrl: '{$tv->base}'
-	});
+		baseUrl: '{$tv->base}' ,
+		buttonId: 'imageplusbutton{$tv->id}'
+{literal} }); {/literal}
 	ImagePlusReady{$tv->id}();
+	
 });
+
+*/
 </script>
 

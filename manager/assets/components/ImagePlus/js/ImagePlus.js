@@ -1,235 +1,197 @@
+ImagePlusArray = new Array();
 
+ImagePlus = function( TVid, opts){ //===============================================================|
 
-	ImagePlus = function(){
+	this.TVid = TVid;
+	
+	
+	// Set defaults
+	var phpThumb = MODx.config.connectors_url+'system/phpthumb.php?';	//?h=150&w=150&src='+data.url+'&wctx={$ctx}&source={$source};
+	this.TV = '';
+	this.buttonText = 'Crop Image';
+	
+	// Override defaults
+	for(i in opts){this[i]=opts[i]};
+	
+	if(this.targetWidth==''){this.targetWidth=0};
+	this.targetWidth = parseInt(this.targetWidth);
+	if(this.targetHeight==''){this.targetHeight=0};
+	this.targetHeight = parseInt(this.targetHeight);
+	
+	
+	// Private non-settable
+	this.crop = { x:0, y:0, w:0, h:0 };
+	this.img = {
+			src: '',
+			width: 0,
+			height: 0
+		};
+
+	
+	
+	// Startup functions ----------------------------------------------------------------------------
+	this.init = function(){
+	
+			// Add this to global parent
+			ImagePlusArray[this.TVid] = this;
+			
+			// Gather bits
+			this.tvInput = document.getElementById(this.tvInputId);
+			
+			// Parse TV for existing values
+			this.parseTV();
+			
+			// Create Ext Image Browser
+			this.setImageBrowser();
+			
+			// Create Image Preview
+			this.setImagePreview();
+			
+			// Create Cropper window
+			this.setCropper();
+			
+		};//
 		
-		this.targetWidth = 100;
-		this.targetHeight = 100;
-		this.thumbURL = MODx.config.connectors_url+'system/phpthumb.php?';	//?h=150&w=150&src='+data.url+'&wctx={$ctx}&source={$source};
-		this.TV = '';
-		this.preview = false;
 		
-		this.sourceImg = {
-				src: ''
-			};
-		this.crop = {
-				sX:	0,
-				sY: 0,
-				w: 0,
-				h: 0
-			};
-		
-		
-		// Set settings ----------------------------------------------------------------------
-		this.set = function(obj){
-				for(i in obj){
-					if(i == 'targetWidth' || i=='targetHeight'){
-						if(obj[i]==''){obj[i]=100};
-						obj[i] = parseInt(obj[i]);
-					};
-					this[i] = obj[i];
+	// Parse TV for existing values ----------------------------------------------------------------
+	this.parseTV = function(){
+			var value = this.TV;
+						
+			if(value==''){return;};					// stop trying if no tv set
+			value = value.replace(phpThumb,'');		// strip out phpThumb url
+			
+			var vars = value.split('&');
+			for(var k=0;k<vars.length;k++){
+				var bits = vars[k].split('=');
+				var key = bits[0];
+				var val = bits[1];
+				switch(key){					
+					case 'sx'	:	this.crop.x = parseInt(val);	break;
+					case 'sy'	:	this.crop.y = parseInt(val);	break;
+					case 'sw'	:	this.crop.w  = parseInt(val);	break;
+					case 'sh'	:	this.crop.h  = parseInt(val);	break;
+					case 'ipW'	:	this.img.width  = parseInt(val);	break;
+					case 'ipH'	:	this.img.height  = parseInt(val);	break;			
+					case 'src'	:	this.img.src = val.replace(this.baseUrl,'');		break;
 				};
-			};//
+			};
+		};//	
 		
-		
-		
-		// Get url for preview thumb -----------------------------------------------------------
-		this.getImageThumb = function(){
-				return '';
-			};//
-			
-			
-		// Source Image changed, update --------------------------------------------------------
-		this.updateSourceImage = function(data){
-				this.sourceImg.src = data.url;
-				this.sourceImg.width = data.image_width;
-				this.sourceImg.height = data.image_height;
-				this.crop.w = data.image_width;
-				this.crop.h = data.image_height;
-				
-				this.update();
-			};//
-			
-			
-		// Update the TV value ------------------------------------------------------------------
-		this.update = function(){
-			
-				// Check for freeform
-				var tW = (this.targetWidth==-1)? this.crop.w : this.targetWidth;
-				var tH = (this.targetHeight==-1)? this.crop.h : this.targetHeight;
-				
-				var TV = this.thumbURL;
-					TV+= 'h='+tH;
-					TV+= '&w='+tW;
-					TV+= '&src='+this.baseUrl+this.sourceImg.src;
-					TV+= '&sx='+this.crop.sX;		// Start Left crop
-					TV+= '&sy='+this.crop.sY;		// Start Top crop
-					TV+= '&sw='+this.crop.w;			// Crop width
-					TV+= '&sh='+this.crop.h;			// Crop height
-					// SAVING OUR OWN STUFF
-					TV+= '&ipW='+this.sourceImg.width;
-					TV+= '&ipH='+this.sourceImg.height;
-					
-				this.TV = TV;
-				this.tvInput.value = TV;
-				this.previewThumb();
-			};//
-			
-		// Break TV into variables for use -------------------------------------------------------
-		this.parseTV = function(){
-				var TV = this.tvInput.value;
-				this.TV = TV;
-				
-				if(TV==''){return;};
-				
-				var bits = TV.split('?');
 
-				if(bits[1]==null){return;};
-				var vars = bits[1].split('&');
-				
-				for(var k=0;k<vars.length;k++){
-					var bits = vars[k].split('=');
-					var key = bits[0];
-					var val = bits[1];
-					switch(key){
-						case 'src'	:	this.sourceImg.src = val.replace(this.baseUrl,'');		break;
-						case 'sx'	:	this.crop.sX = parseInt(val);	break;
-						case 'sy'	:	this.crop.sY = parseInt(val);	break;
-						case 'sw'	:	this.crop.w  = parseInt(val);	break;
-						case 'sh'	:	this.crop.h  = parseInt(val);	break;
-						case 'ipW'	:	this.sourceImg.width  = parseInt(val);	break;
-						case 'ipH'	:	this.sourceImg.height  = parseInt(val);	break;
-					};
-				};	
-				
-			};//
+	// Set up Image Browser ------------------------------------------------------------------------
+	this.setImageBrowser = function(){	
+			this.browser = MODx.load({			
+				xtype: 'modx-panel-tv-image'
+				,renderTo: this.browserId
+				,tv: this.TVid
+				,value: this.img.src
+				,relativeValue: this.img.src
+				,width: '97%'
+				,allowBlank: true
+				,wctx: 'mgr'
+				,openTo: this.getOpenTo()
+				,source: this.mediaSourceId
+				,msgTarget: 'under'
+				,listeners: {
+				    'select': {fn:function(data) {
+				        MODx.fireResourceFormChange();
+				   //      this.updateSourceImage(data);
+				       
+				    }}
+				}
+			});			
+		};//
+		
+		
+	// Get the path to open image browser to -------------------------------------------------------
+	this.getOpenTo = function(){
+			if(this.img.src==''){return ''};
 			
-			
-		// Generate a preview thumbnail -------------------------------------------------------
-		this.previewThumb = function(){
-				this.preview.src = this.TV;
-			};//
-			
-			
-			
-		// Opens the cropping window -----------------------------------------------------------
-		this.showCropWindow = function(){
-			
-				// Calculate width/height constraints
-				var wW = Win().width;
-				
-				var wH = Win().height;				
-				if( wH > this.sourceImg.height + 125){
-						wH = this.sourceImg.height + 125;
-					};
-					
-				if( wW > this.sourceImg.width + 10){
-						wW = this.sourceImg.width + 10;
-					};
-								
-				this.cropWindow = new MODx.Window({
-						 title: 'Image Crop'
-						,width: wW
-						,height: wH
-						,resizable: false
-						,cancelBtnText:	'Done'
-						,saveBtnText:	''
-						,beforeSubmit: function(){
-								alert("SAVE");
-								return false;
-							}
-						,html: '<img src="'+this.baseUrl+this.sourceImg.src+'" id="crop'+this.TVid+'" style="margin-top:-20px; margin-bottom:-0px;" />'
-						,allowDrop: false
-						,autoScroll: true
-						,autoHeight: false
-						,closeAction: 'close'
-						,collapsible: false
-						,constrain: true
-						,margins:  {top:0, bottom:0}
-						,padding: 0
-						,resizable: true
-						,shadow: true
-						
-						
-					});
-					
-				this.cropWindow.on('beforeHide',function(){
-					window.currentImagePlus.update();
-					window.currentImagePlus.cropper.destroy(); // Destroy jCrop
-					Ext.getCmp('modx-panel-resource').markDirty(); // Enable save button
-					window.currentImagePlus = null;
+			var bits = this.img.src.split('/');
+			bits.pop();
+			return bits.join('/');
+		};
+		
+
+
+
+
+	// Set up Image Preview ------------------------------------------------------------------------
+	this.setImagePreview = function(){	
+			document.getElementById(this.previewId).src = this.getImagePreviewSrc();
+		};//
+		
+	// Get url src for preview thumbnail -----------------------------------------------------------
+	this.getImagePreviewSrc = function(){
+			return this.TV;
+		};//
+
+
+
+	// Set up crop window --------------------------------------------------------------------------
+	this.setCropper = function(){
+			this.cropButton = new Ext.Button({
+				  renderTo: this.buttonId,
+				  text: this.buttonText,
+				  imagePlusId: this.TVid,
+				  handler: function() {
+						ImagePlusArray[this.imagePlusId].launchCropWindow();
+					}
 				});	
-				
-				this.cropWindow.buttons.pop();
-				
-				this.cropWindow.show();
-				
-				window.currentImagePlus = this;
-				
-				// Set up jCrop options
-				var mWidth = (this.targetWidth>=0)? this.targetWidth : 0;	
-				var mHeight = (this.targetHeight>=0)? this.targetHeight : 0;	
-				var ratio = (mWidth > 0 && mHeight>0)? mWidth/mHeight : null;
-				
-				var sx = this.crop.sX;
-				var sy = this.crop.sY;
-				var sx2 = sx + this.crop.w;
-				var sy2 = sy + this.crop.h;
-				
-				this.croppper = false;
-				
-				
-				jQuery('#crop'+this.TVid).Jcrop({
-						aspectRatio: ratio,
-						minSize: [mWidth, mHeight],
-						setSelect:   [ sx, sy, sx2, sy2 ],
-						onSelect: function(c){
-								window.currentImagePlus.crop.sX = c.x;
-							window.currentImagePlus.crop.sY = c.y;
-							window.currentImagePlus.crop.w = c.w;
-							window.currentImagePlus.crop.h = c.h;
-					//		window.currentImagePlus.update();	// Removed to reduce calls to phpThumb
-						}
-					},function(){window.currentImagePlus.cropper = this;});
-			
-			};//
-			
-			
+		};//
 		
+	// Launch cropper window ----------------------------------------------------------------------
+	this.launchCropWindow = function(){
+			this.window = new Extamples.CropWindow({
+				imageUrl: this.baseUrl+this.img.src,
+				listeners:{
+				save: function(){
+				  // handler if a crop was successfull, and the window was closed
+				  console.log('save!');
+				},
+				scope: this
+				}
+			});
+			this.window.imagePlusId = this.TVid;
+			this.window.show();
+		};//
+	
+	
+	// Crop selection saved, update ----------------------------------------------------------------
+	this.onCropSave = function(data){
+			this.crop.x = data.x;
+			this.crop.y = data.y;
+			this.crop.w = data.width;	
+			this.crop.h = data.height;
+			this.update();
+			Ext.getCmp('modx-panel-resource').markDirty(); // Enable save button
+
+		};//
+
+
+	// Update the TV value ------------------------------------------------------------------
+	this.update = function(){
 		
-	};// END ImagePlus
+			// Check for freeform
+			var tW = (this.targetWidth==-1)? this.crop.w : this.targetWidth;
+			var tH = (this.targetHeight==-1)? this.crop.h : this.targetHeight;
+			
+			var TV = phpThumb+'';
+				TV+= 'h='+tH;
+				TV+= '&w='+tW;
+				TV+= '&src='+this.baseUrl+this.img.src;
+				TV+= '&sx='+this.crop.x;		// Start Left crop
+				TV+= '&sy='+this.crop.y;		// Start Top crop
+				TV+= '&sw='+this.crop.w;			// Crop width
+				TV+= '&sh='+this.crop.h;			// Crop height
+				// SAVING OUR OWN STUFF
+				TV+= '&ipW='+this.img.width;
+				TV+= '&ipH='+this.img.height;
+				
+			this.TV = TV;
+			this.tvInput.value = TV;
+			this.setImagePreview();
+		};//	
 	
 	
-	
-	
-function Win() {
-	var browserWinWidth = 0, browserWinHeight = 0;
-	if( typeof( window.innerWidth ) == 'number' ) {
-		//Non-IE
-		browserWinWidth = window.innerWidth;
-		browserWinHeight = window.innerHeight;
-	} else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
-		//IE 6+ in 'standards compliant mode'
-		browserWinWidth = document.documentElement.clientWidth;
-		browserWinHeight = document.documentElement.clientHeight;
-	} else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
-		//IE 4 compatible
-		browserWinWidth = document.body.clientWidth;
-		browserWinHeight = document.body.clientHeight;
-	}
-	return { width: browserWinWidth, height: browserWinHeight };
-}	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+}// end ImagePlus object ============================================================================|
