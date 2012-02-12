@@ -1,2 +1,0 @@
-02-Feb-2012 ---------------------
-#	Updated JS file to fix empty value error
