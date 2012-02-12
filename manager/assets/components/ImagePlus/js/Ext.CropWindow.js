@@ -75,17 +75,18 @@ Extamples.CropWindow = Ext.extend(Extamples.CropWindowUi, {
 			initialHeight: imgLoad.height,
 			minWidth: IP.targetWidth,
 			minHeight: IP.targetHeight,
-			cropStartH: IP.targetHeight,
-			cropStartW: IP.targetWidth,
+			cropStartH: IP.crop.h,
+			cropStartW: IP.crop.w,
+			cropStartX: IP.crop.x,
+			cropStartY: IP.crop.y
 			//       quadratic: true
-			});     
-			
+			});     		
+		
       	this.cropData = crop.getCropData();
       	crop.on('change', function(foo,x) {this.cropData = x;}, this);
       	this.add(crop);
     }).createDelegate(this);
     imgLoad.src = this.imageUrl;
-    console.log('SRC:::',this.imageUrl);
     
     // handler for the buttons
     this.buttonCancel.on('click', this.close, this);
@@ -133,6 +134,7 @@ Ext.ux.ImageCrop = Ext.extend(Ext.Component, {
     else {
       c.height = this.cropStartH;
       c.width = this.cropStartW;
+     
       this.maxWidth = this.initialWidth;
       this.maxHeight = this.initialHeight;
     }
@@ -146,6 +148,8 @@ Ext.ux.ImageCrop = Ext.extend(Ext.Component, {
     
     this.cropWrapper = this.el.insertFirst().setSize(this.initialWidth,this.initialHeight);
     this.cropWrapped = this.cropWrapper.insertFirst().setSize(c.width, c.height);
+    
+    
     this.cropWrapped.insertFirst({tag: "img", src: Ext.BLANK_IMAGE_URL, width: c.width, height: c.height});
     this.cropBgBox = this.el.insertFirst().setStyle({
       background: 'url('+this.imageUrl+') no-repeat left top',
@@ -161,55 +165,66 @@ Ext.ux.ImageCrop = Ext.extend(Ext.Component, {
   initWrapper: function() {
     var parentBox = this;
     var cropBgBox = this.cropBgBox;
+  
     var imageUrl = this.imageUrl;
     var result = this.cropData;
     var wrapped = new Ext.Resizable(this.cropWrapped, {
-      wrap: true,
-      pinned: true,
-      minWidth: this.minWidth,
-      minHeight: this.minHeight,
-      maxWidth: this.maxWidth,
-      maxHeight: this.maxHeight,
-      draggable:true,
-      preserveRatio: this.preserveRatio,
-      handles: 'all',
-      constrainTo: this.cropWrapper,
-      listeners: {
-        'resize': function (box, w, h) {
-          box.imageOffset = [box.el.getBox().x - cropBgBox.getX(), box.el.getBox().y - cropBgBox.getY()];
-          result.width = w;
-          result.height = h;
-          result.x = box.imageOffset[0];
-          result.y = box.imageOffset[1];
-          box.el.setStyle({
-            'background-image':'url('+imageUrl+')',
-            'background-position':(-box.imageOffset[0])+'px '+(-box.imageOffset[1])+'px'
-          });
-          if(parentBox.fireEvent('change', parentBox, result) === false){
-            return parentBox;
-          }
-        },
-        'beforeresize': function () {
-          this.getEl().setStyle({background:'transparent'});
-        }
-      },
-      dynamic:true
-    });
-    //wrapped.getResizedChild().setStyle({background:'url(../images/hochschule-reutlingen_medium.jpg)'});
+		  wrap: true,
+		  pinned: true,
+		  minWidth: this.minWidth,
+		  minHeight: this.minHeight,
+		  maxWidth: this.maxWidth,
+		  maxHeight: this.maxHeight,
+		  draggable:true,
+		  preserveRatio: this.preserveRatio,
+		  handles: 'all',
+		  constrainTo: this.cropWrapper,
+		  listeners: {
+		    'resize': function (box, w, h) {
+		      box.imageOffset = [box.el.getBox().x - cropBgBox.getX(), box.el.getBox().y - cropBgBox.getY()];
+		      result.width = w;
+		      result.height = h;
+		      result.x = box.imageOffset[0];
+		      result.y = box.imageOffset[1];
+		      box.el.setStyle({
+		        'background-image':'url('+imageUrl+')',
+		        'background-position':(-box.imageOffset[0])+'px '+(-box.imageOffset[1])+'px'
+		      });
+		      if(parentBox.fireEvent('change', parentBox, result) === false){
+		        return parentBox;
+		      }
+		    },
+		    'beforeresize': function () {
+		      this.getEl().setStyle({background:'transparent'});
+		    }
+		  },
+		  dynamic:true
+		});
+
+    
     wrapped.getEl().setStyle({background:'url('+imageUrl+')'});
-    wrapped.imageOffset = [0,0];
+//    wrapped.imageOffset = [0,0];
+	
+	var X = this.cropStartX + wrapped.getEl().getBox()[0];
+	var Y = this.cropStartY + wrapped.getEl().getBox()[1];
+	wrapped.getEl().moveTo(X,Y);
+	wrapped.getEl().setStyle({
+			'background-position':(-this.cropStartX)+'px '+(-this.cropStartY)+'px'
+		});
+  
+    
     wrapped.dd.endDrag = function(){
-      wrapped.imageOffset = [wrapped.getEl().getBox().x - cropBgBox.getX(), wrapped.getEl().getBox().y - cropBgBox.getY()];
-      result.x = wrapped.imageOffset[0];
-      result.y = wrapped.imageOffset[1];
-      wrapped.getEl().setStyle({
-        'background-image':'url('+imageUrl+')',
-        'background-position':(-wrapped.imageOffset[0])+'px '+(-wrapped.imageOffset[1])+'px'
-      });
-      if(parentBox.fireEvent('change', parentBox, result) === false){
-        return parentBox;
-      }
-    };
+			wrapped.imageOffset = [wrapped.getEl().getBox().x - cropBgBox.getX(), wrapped.getEl().getBox().y - cropBgBox.getY()];
+			result.x = wrapped.imageOffset[0];
+			result.y = wrapped.imageOffset[1];
+			wrapped.getEl().setStyle({
+					'background-image':'url('+imageUrl+')',
+					'background-position':(-wrapped.imageOffset[0])+'px '+(-wrapped.imageOffset[1])+'px'
+				});
+			if(parentBox.fireEvent('change', parentBox, result) === false){
+				return parentBox;
+			}
+		};
     wrapped.dd.startDrag = function(e){
       wrapped.getEl().setStyle({
         'background':'transparent'

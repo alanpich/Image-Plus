@@ -27,6 +27,7 @@ class modTemplateVarInputRenderImagePlus extends modTemplateVarInputRender {
         $source->initialize();
         $base = $source->getBaseUrl();
         $this->tv->set('base',$base);
+        $this->tv->set('source',$source->get('id'));
         
         // Get source file path (if set)
 		$src = '';

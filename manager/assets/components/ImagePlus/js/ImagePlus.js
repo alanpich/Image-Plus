@@ -75,6 +75,16 @@ ImagePlus = function( TVid, opts){ //===========================================
 					case 'src'	:	this.img.src = val.replace(this.baseUrl,'');		break;
 				};
 			};
+			
+			
+			// Ensure crop width/height match target ratio
+			var c = this.crop.w / this.crop.h;
+			var t = this.targetWidth / this.targetHeight;
+			if(c !== t){
+				this.crop.w = this.targetWidth;
+				this.crop.h = this.targetHeight;
+			};
+			
 		};//	
 		
 
