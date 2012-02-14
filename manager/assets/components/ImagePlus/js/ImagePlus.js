@@ -199,8 +199,6 @@ ImagePlus = function( TVid, opts){ //===========================================
 			var tW = (this.targetWidth==-1)? this.crop.w : this.targetWidth;
 			var tH = (this.targetHeight==-1)? this.crop.h : this.targetHeight;
 			
-			console.log(tW,tH);
-			
 			var TV = phpThumb+'';
 				if(this.targetHeight!=-1){
 					TV+= 'h='+tH;}
