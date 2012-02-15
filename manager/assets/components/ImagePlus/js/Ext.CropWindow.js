@@ -75,7 +75,7 @@ Extamples.CropWindow = Ext.extend(Extamples.CropWindowUi, {
 		var cWidth = (IP.crop.w==-1) ? 100 : IP.crop.w;
 		var cHeight = (IP.crop.h==-1) ? 100 : IP.crop.h;
 //		var cHeight = IP.crop.h;
-		console.log(cHeight);
+//		console.log(cHeight);
 		
 		var useRatio = true;
 		if(IP.targetWidth==-1||IP.targetHeight==-1){
