@@ -166,7 +166,7 @@ ImagePlus = function( TVid, opts){ //===========================================
 	// Launch cropper window ----------------------------------------------------------------------
 	this.launchCropWindow = function(){
 			this.window = new Extamples.CropWindow({
-				imageUrl: this.baseUrl+encodeURIComponent(this.img.src),
+				imageUrl: this.baseUrl+this.img.src,
 				listeners:{
 				save: function(){
 				  // handler if a crop was successfull, and the window was closed
