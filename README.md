@@ -1,6 +1,8 @@
 #Image-Plus#
 ##ModX 2.2+ Custom TV Input Type##
 -----------------------------
+## To be overhaules and completed
+
 ### About ###
 Image-Plus is an advancede image input type for template variables. It allows for quick and easy re-use of a single source image accross multiple areas on the site.
 From an objective point of view, it is a shiny front-end for phpThumb throughout your design.
