@@ -1,3 +1,13 @@
+##This repo is soon to be closed
+Current work on tvImagePlus (v2.0, aka 'the one that works') will be moved to a new repo here, 
+leaving this old thing for dead.
+
+I can't suggest, justify or support anybody using the code in this repo as it is outdated and incomplete. 
+
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+
 #Image-Plus#
 ##ModX 2.2+ Custom TV Input Type##
 -----------------------------
